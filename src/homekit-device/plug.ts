@@ -47,12 +47,10 @@ export default class HomeKitDevicePlug extends HomekitDevice {
       this.removeSwitchService();
     } else if (this.category === Categories.OUTLET) {
       primaryService = this.addOutletService();
-      this.removeBrightnessCharacteristic(primaryService);
       this.removeLightbulbService();
       this.removeSwitchService();
     } else if (this.category === Categories.SWITCH) {
       primaryService = this.addSwitchService();
-      this.removeBrightnessCharacteristic(primaryService);
       this.removeLightbulbService();
       this.removeOutletService();
     } else {
@@ -216,7 +214,9 @@ export default class HomeKitDevicePlug extends HomekitDevice {
       this.updateValue(service, onCharacteristic, value);
     });
 
-    this.addBrightnessCharacteristic(service);
+    if (this.tplinkDevice.supportsDimmer) {
+      this.addBrightnessCharacteristic(service);
+    }
 
     return service;
   }
@@ -250,13 +250,6 @@ export default class HomeKitDevicePlug extends HomekitDevice {
     });
 
     return service;
-  }
-
-  private removeBrightnessCharacteristic(service: Service) {
-    this.removeCharacteristicIfExists(
-      service,
-      this.platform.Characteristic.Brightness
-    );
   }
 
   private addEnergyCharacteristics(service: Service): void {
