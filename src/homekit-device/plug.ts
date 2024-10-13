@@ -138,21 +138,19 @@ export default class HomeKitDevicePlug extends HomekitDevice {
 
     this.addOnCharacteristic(outletService);
 
-    if (this.category === Categories.OUTLET) {
-      const outletInUseCharacteristic = getOrAddCharacteristic(
-        outletService,
-        Characteristic.OutletInUse
-      );
+    const outletInUseCharacteristic = getOrAddCharacteristic(
+      outletService,
+      Characteristic.OutletInUse
+    );
 
-      outletInUseCharacteristic.onGet(() => {
-        this.getSysInfo().catch(this.logRejection.bind(this)); // this will eventually trigger update
-        return this.tplinkDevice.inUse; // immediately returned cached value
-      });
+    outletInUseCharacteristic.onGet(() => {
+      this.getSysInfo().catch(this.logRejection.bind(this)); // this will eventually trigger update
+      return this.tplinkDevice.inUse; // immediately returned cached value
+    });
 
-      this.tplinkDevice.on('in-use-update', (value) => {
-        this.updateValue(outletService, outletInUseCharacteristic, value);
-      });
-    }
+    this.tplinkDevice.on('in-use-update', (value) => {
+      this.updateValue(outletService, outletInUseCharacteristic, value);
+    });
 
     return outletService;
   }
